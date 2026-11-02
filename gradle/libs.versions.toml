@@ -2,7 +2,7 @@
 # Dependency locking is enabled in the root build; see docs/development.md for generating lockfiles.
 [versions]
 snakeyaml = "2.7"
-gson = "2.13.2"
+gson = "2.15.0"
 hdrhistogram = "2.2.2"
 junit = "5.14.4"
 
