@@ -1,0 +1,25 @@
+# Java / Gradle
+*.class
+*.log
+*.jar
+!gradle/wrapper/gradle-wrapper.jar
+.gradle/
+build/
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+replay_pid*
+
+# --- Routeplane ---
+# Gradle wrapper jar is committed on purpose
+!gradle/wrapper/gradle-wrapper.jar
+.gradle/
+build/
+!gradle/wrapper/
+out/
+.idea/
+*.iml
+.vscode/
+# Scratch space used by the experiment runner (generated configs, logs, raw samples). Final reports in
+# experiments/results/ ARE committed.
+experiments/work/
+.DS_Store

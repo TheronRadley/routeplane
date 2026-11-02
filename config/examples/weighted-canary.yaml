@@ -1,0 +1,17 @@
+# Weighted routing plus a header-selected canary route.
+# Requests with "X-Env: canary" go to the canary upstream; everything else is split 90/10 between stable and a new build.
+routes:
+  - id: canary-header
+    priority: 100                       # explicit priority: evaluated before the general route
+    match:
+      pathPrefix: /api
+      headers: [{name: X-Env, equals: canary}]
+    upstreams:
+      - {id: canary, url: "http://127.0.0.1:9003"}
+
+  - id: api
+    match: {pathPrefix: /api}
+    policy: weighted-round-robin        # deterministic, evenly interleaved: 90 of every 100 requests to stable
+    upstreams:
+      - {id: stable, url: "http://127.0.0.1:9001", weight: 90}
+      - {id: next, url: "http://127.0.0.1:9002", weight: 10}

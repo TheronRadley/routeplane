@@ -1,0 +1,45 @@
+id: fail-shadow-saturated
+description: >-
+  The shadow target becomes very slow (2 s per request) from 8 s to 24 s while 100% of requests are mirrored to it through a small queue (8) and 4 workers: the queue fills and the overflow is dropped; the primary must be unaffected.
+kind: failure
+upstreams:
+  - {id: a, profile: {delayMs: 5, jitterMs: 5, payloadMin: 1024, payloadMax: 1024}}
+  - {id: s, profile: {delayMs: 5, jitterMs: 5, payloadMin: 1024, payloadMax: 1024}}
+proxy:
+  jvmOptions: ["-Xms256m", "-Xmx512m"]
+  base: |
+    server:
+      host: 127.0.0.1
+      port: ${PROXY_PORT}
+      maxConcurrentRequests: 20000
+    admin:
+      host: 127.0.0.1
+      port: ${ADMIN_PORT}
+    logging:
+      level: warn
+      accessLog: {enabled: false}
+    routes:
+      - id: api
+        match: {pathPrefix: /api}
+        policy: round-robin
+        upstreams:
+          - {id: a, url: "http://127.0.0.1:${UP_A}", maxConcurrent: 3000}
+  variants:
+    no-shadow: |
+      timeouts: {connect: 500ms, response: 1s, request: 1500ms}
+    shadow: |
+      timeouts: {connect: 500ms, response: 1s, request: 1500ms}
+      shadow:
+        targets:
+          - {id: s1, url: "http://127.0.0.1:${UP_S}", samplePercent: 100, timeout: 1s, maxConcurrent: 4, queueCapacity: 8}
+load:
+  path: /api/x
+  rate: 500
+  warmup: 8s
+  duration: 40s
+  timeout: 4s
+  maxInFlight: 3000
+runs: 2
+timeline:
+  - {at: 8s, upstream: s, set: {delayMs: 2000}, label: "shadow slow (2 s)"}
+  - {at: 24s, upstream: s, set: {delayMs: 5, jitterMs: 5}, label: "shadow normal", recovery: true}

@@ -1,0 +1,16 @@
+id: direct
+description: >-
+  Baseline. The load generator talks to one fault-injection upstream directly, with no proxy. Everything the proxy experiments add is measured against this.
+kind: steady
+direct: true
+upstreams:
+  - {id: a, profile: {delayMs: 5, jitterMs: 5, payloadMin: 1024, payloadMax: 1024}}
+load:
+  path: /api/x
+  rates: [100, 500, 1000, 2500, 5000, 10000]
+  warmup: 15s
+  duration: 10s
+  timeout: 5s
+  maxInFlight: 3000
+runs: 3
+highRateRuns: 1

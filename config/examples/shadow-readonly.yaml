@@ -1,0 +1,23 @@
+# Mirror 10% of read traffic to a candidate build and compare its answers with production's.
+# Writes are never mirrored (only GET/HEAD/OPTIONS are eligible by default).
+routes:
+  - id: catalog
+    match: {pathPrefix: /catalog}
+    upstreams:
+      - {id: prod, url: "http://127.0.0.1:9001"}
+    shadow:
+      targets:
+        - id: candidate
+          url: "http://127.0.0.1:9002"
+          samplePercent: 10             # required: shadowing is opt-in and has no default fraction
+          sampling: deterministic       # the same session is always (or never) mirrored
+          sampleKey: "header:X-Session-Id"
+          timeout: 2s
+          maxConcurrent: 8              # workers
+          queueCapacity: 128            # beyond this, new shadow work is dropped and counted
+      headers:
+        set: {X-Shadow-Env: candidate}  # Authorization, cookies and other credentials are removed automatically
+      compare:
+        enabled: true
+        body: true
+        headers: [content-type]

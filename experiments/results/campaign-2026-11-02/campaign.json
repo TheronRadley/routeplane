@@ -1,0 +1,52 @@
+{
+  "environment": {
+    "capturedAt": "2026-11-02T12:26:34.962032491Z",
+    "os": "Linux 6.1.158+ amd64",
+    "kernel": "Linux version 6.1.158+ (root@runnervmeorf1) (gcc (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, GNU ld (GNU Binutils for Ubuntu) 2.42) #1 SMP PREEMPT_DYNAMIC Mon May 11 18:48:24 UTC 2026",
+    "cpuModel": "Intel(R) Xeon(R) Processor @ 2.60GHz",
+    "availableProcessors": 2.0,
+    "memTotalMb": 3939.0,
+    "cgroupCpuMax": "n/a",
+    "cgroupMemoryMax": "n/a",
+    "runnerJava": "21.0.8 (Eclipse Adoptium, OpenJDK 64-Bit Server VM)",
+    "loadGenerator": "dev.routeplane.bench.LoadGenerator: open-loop, JDK HttpClient (HTTP/1.1), virtual-thread executor, latency measured from intended send time",
+    "topology": "load generator, proxy and upstreams run on the SAME machine as separate processes; they compete for the same CPUs",
+    "git": "ac5c47e"
+  },
+  "invocations": [
+    {
+      "command": "--out experiments/results/campaign-2026-11-02 --work /home/user/.cache/rp-work",
+      "scenarios": [
+        "basic",
+        "breaker-shadow",
+        "breaker",
+        "direct",
+        "fail-503",
+        "fail-capacity",
+        "fail-gradual-recovery",
+        "fail-outage",
+        "fail-retry-amplification",
+        "fail-shadow-down",
+        "fail-shadow-saturated",
+        "fail-slow",
+        "shadow",
+        "weighted"
+      ],
+      "startedAtMillis": 1.793622395004E12
+    },
+    {
+      "command": "--out experiments/results/campaign-2026-11-02 --work /home/user/.cache/rp-work --only fail-retry-amplification,fail-shadow-down,fail-shadow-saturated,fail-slow,shadow,weighted",
+      "note": "Resumed: the first invocation aborted when fail-retry-amplification@retry-unbudgeted could not start, because the scenario set minRetriesPerSecond: 100000, above the configuration\u0027s documented maximum of 10000 (the proxy\u0027s strict validation refused it). The scenario was corrected to 10000 and the remaining scenarios were run here; fail-retry-amplification@no-retry was run again and its two runs replaced the earlier two.",
+      "scenarios": [
+        "fail-retry-amplification",
+        "fail-shadow-down",
+        "fail-shadow-saturated",
+        "fail-slow",
+        "shadow",
+        "weighted"
+      ],
+      "startedAtMillis": 1793625018492,
+      "finishedAtMillis": 1793626751856
+    }
+  ]
+}

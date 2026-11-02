@@ -1,0 +1,12 @@
+# Session affinity: a given user id always reaches the same upstream while the set of upstreams is unchanged.
+routes:
+  - id: sessions
+    match: {pathPrefix: /app}
+    policy:
+      type: hash
+      options:
+        key: "header:X-User-Id"         # also: cookie:<name>, query:<name>, path, client-ip, request-id
+    upstreams:
+      - {id: a, url: "http://127.0.0.1:9001"}
+      - {id: b, url: "http://127.0.0.1:9002"}
+      - {id: c, url: "http://127.0.0.1:9003"}

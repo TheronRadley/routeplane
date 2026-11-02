@@ -1,0 +1,7 @@
+# The smallest useful configuration: one route, one upstream. Everything else uses the documented defaults
+# (loopback listeners, no retries, no circuit breaker, no shadowing).
+routes:
+  - id: web
+    match: {pathPrefix: /}
+    upstreams:
+      - {id: app, url: "http://127.0.0.1:9001"}

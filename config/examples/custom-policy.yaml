@@ -1,0 +1,12 @@
+# Selecting a custom routing policy. The class implementing RoutingPolicyFactory (id "tenant-sticky") must be on the class path
+# and listed in META-INF/services/dev.routeplane.routing.RoutingPolicyFactory; see docs/routing.md.
+# This file only validates when such a policy is installed, so it is not part of the automated example check.
+routes:
+  - id: tenants
+    match: {pathPrefix: /t}
+    policy:
+      type: tenant-sticky
+      options: {header: X-Tenant}
+    upstreams:
+      - {id: a, url: "http://127.0.0.1:9001"}
+      - {id: b, url: "http://127.0.0.1:9002"}

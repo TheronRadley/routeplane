@@ -1,0 +1,35 @@
+# An API route with every resilience feature switched on, with explicit, conservative numbers.
+server:
+  host: 0.0.0.0                         # accept remote clients (put a TLS-terminating load balancer in front)
+  port: 8080
+  maxConcurrentRequests: 2000
+
+routes:
+  - id: api
+    match: {pathPrefix: /api}
+    policy: least-active
+    upstreams:
+      - {id: a, url: "http://10.0.0.11:8080", maxConcurrent: 200}
+      - {id: b, url: "http://10.0.0.12:8080", maxConcurrent: 200}
+    timeouts:
+      connect: 500ms
+      response: 2s                      # time to headers, per attempt
+      request: 5s                       # overall deadline including retries and body streaming
+    retry:
+      maxAttempts: 3
+      methods: [GET, HEAD, OPTIONS]     # idempotent only; add others deliberately
+      retryStatuses: [502, 503, 504]
+      backoff: {initial: 25ms, max: 500ms, jitter: full}
+      budget: {ratio: 0.1, minRetriesPerSecond: 5, window: 10s}   # retries <= ~10% extra load under sustained failure
+    circuitBreaker:
+      failureRateThreshold: 50
+      minimumRequests: 20
+      slidingWindow: {type: time, duration: 10s}
+      openDuration: 10s
+      halfOpenMaxProbes: 3
+      recoverySuccessThreshold: 3
+    health:
+      active: {path: /healthz, interval: 5s, timeout: 1s, unhealthyThreshold: 3, healthyThreshold: 2}
+      passive: {consecutiveFailures: 5, ejectionTime: 30s}
+    fallback:
+      response: {status: 503, body: "temporarily unavailable", contentType: "text/plain; charset=utf-8"}

@@ -1,0 +1,53 @@
+id: fail-retry-amplification
+description: >-
+  All three upstreams start failing half of their requests with 503 from 8 s to 24 s. Compares no retries, up to 3 attempts with an effectively unlimited retry budget, and up to 3 attempts with a 10% retry budget: retry amplification (upstream attempts per client request) and what it buys.
+kind: failure
+upstreams:
+  - {id: a, profile: {delayMs: 5, jitterMs: 5, payloadMin: 1024, payloadMax: 1024}}
+  - {id: b, profile: {delayMs: 5, jitterMs: 5, payloadMin: 1024, payloadMax: 1024}}
+  - {id: c, profile: {delayMs: 5, jitterMs: 5, payloadMin: 1024, payloadMax: 1024}}
+proxy:
+  jvmOptions: ["-Xms256m", "-Xmx512m"]
+  base: |
+    server:
+      host: 127.0.0.1
+      port: ${PROXY_PORT}
+      maxConcurrentRequests: 20000
+    admin:
+      host: 127.0.0.1
+      port: ${ADMIN_PORT}
+    logging:
+      level: warn
+      accessLog: {enabled: false}
+    routes:
+      - id: api
+        match: {pathPrefix: /api}
+        policy: round-robin
+        upstreams:
+          - {id: a, url: "http://127.0.0.1:${UP_A}", maxConcurrent: 3000}
+          - {id: b, url: "http://127.0.0.1:${UP_B}", maxConcurrent: 3000}
+          - {id: c, url: "http://127.0.0.1:${UP_C}", maxConcurrent: 3000}
+  variants:
+    no-retry: |
+      timeouts: {connect: 500ms, response: 1s, request: 2s}
+    retry-unbudgeted: |
+      timeouts: {connect: 500ms, response: 1s, request: 2s}
+      retry: {maxAttempts: 3, methods: [GET], backoff: {initial: 2ms, max: 20ms, jitter: full}, budget: {ratio: 1.0, minRetriesPerSecond: 10000, window: 10s}}
+    retry-budgeted: |
+      timeouts: {connect: 500ms, response: 1s, request: 2s}
+      retry: {maxAttempts: 3, methods: [GET], backoff: {initial: 2ms, max: 20ms, jitter: full}, budget: {ratio: 0.1, minRetriesPerSecond: 5, window: 10s}}
+load:
+  path: /api/x
+  rate: 500
+  warmup: 8s
+  duration: 40s
+  timeout: 4s
+  maxInFlight: 3000
+runs: 2
+timeline:
+  - {at: 8s, upstream: a, set: {errorRate: 0.5, errorStatus: 503}, label: "all upstreams 50% 503"}
+  - {at: 8s, upstream: b, set: {errorRate: 0.5, errorStatus: 503}, label: "b 50% 503"}
+  - {at: 8s, upstream: c, set: {errorRate: 0.5, errorStatus: 503}, label: "c 50% 503"}
+  - {at: 24s, upstream: a, set: {errorRate: 0.0}, label: "all healthy", recovery: true}
+  - {at: 24s, upstream: b, set: {errorRate: 0.0}, label: "b healthy", recovery: true}
+  - {at: 24s, upstream: c, set: {errorRate: 0.0}, label: "c healthy", recovery: true}

@@ -1,0 +1,51 @@
+# Routeplane development configuration.
+# Start the local upstreams first:   experiments/scripts/dev-up.sh   (or see docs/benchmarking.md)
+# Then:                              ./gradlew run --args="serve --config config/routeplane.yaml"
+# Every option is documented in docs/configuration.md; unknown keys are rejected at start-up.
+version: 1
+
+server:
+  host: 127.0.0.1            # loopback by default; use 0.0.0.0 to accept remote clients
+  port: 8080
+
+admin:                       # separate listener; loopback only unless auth + TLS are configured
+  host: 127.0.0.1
+  port: 9090
+
+logging:
+  level: info
+  accessLog:
+    enabled: true
+    includeQuery: false      # query strings may contain secrets
+
+routes:
+  - id: api
+    match:
+      pathPrefix: /api
+    policy: weighted-round-robin
+    upstreams:
+      - id: primary-a
+        url: http://127.0.0.1:9001
+        weight: 70
+      - id: primary-b
+        url: http://127.0.0.1:9002
+        weight: 30
+    timeouts:
+      connect: 500ms
+      response: 5s
+      request: 10s
+    retry:                   # off unless maxAttempts > 1; only safe methods unless you list others
+      maxAttempts: 2
+      methods: [GET, HEAD, OPTIONS]
+      retryStatuses: [502, 503, 504]
+      backoff: { initial: 25ms, max: 500ms, jitter: full }
+      budget: { ratio: 0.2, minRetriesPerSecond: 5, window: 10s }
+    circuitBreaker:
+      failureRateThreshold: 50
+      minimumRequests: 20
+      slidingWindow: { type: count, size: 100 }
+      openDuration: 10s
+      halfOpenMaxProbes: 3
+      recoverySuccessThreshold: 3
+    health:
+      passive: { consecutiveFailures: 5, ejectionTime: 15s }

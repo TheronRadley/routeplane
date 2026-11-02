@@ -1,0 +1,35 @@
+id: basic
+description: >-
+  Proxy with one upstream, round-robin, no retries, no circuit breaker, no shadowing: the cost of the proxy hop itself.
+kind: steady
+upstreams:
+  - {id: a, profile: {delayMs: 5, jitterMs: 5, payloadMin: 1024, payloadMax: 1024}}
+proxy:
+  jvmOptions: ["-Xms256m", "-Xmx512m"]
+  config: |
+    server:
+      host: 127.0.0.1
+      port: ${PROXY_PORT}
+      maxConcurrentRequests: 20000
+    admin:
+      host: 127.0.0.1
+      port: ${ADMIN_PORT}
+    logging:
+      level: warn
+      accessLog: {enabled: false}
+    routes:
+      - id: api
+        match: {pathPrefix: /api}
+        policy: round-robin
+        upstreams:
+          - {id: a, url: "http://127.0.0.1:${UP_A}", maxConcurrent: 3000}
+        timeouts: {connect: 1s, response: 2s, request: 3s}
+load:
+  path: /api/x
+  rates: [100, 500, 1000, 2500, 5000, 10000]
+  warmup: 15s
+  duration: 10s
+  timeout: 5s
+  maxInFlight: 3000
+runs: 3
+highRateRuns: 1

@@ -1,0 +1,48 @@
+id: fail-slow
+description: >-
+  Upstream a becomes 500 ms slower from 8 s to 24 s; the route's response timeout is 300 ms, so its answers time out.
+kind: failure
+upstreams:
+  - {id: a, profile: {delayMs: 5, jitterMs: 5, payloadMin: 1024, payloadMax: 1024}}
+  - {id: b, profile: {delayMs: 5, jitterMs: 5, payloadMin: 1024, payloadMax: 1024}}
+  - {id: c, profile: {delayMs: 5, jitterMs: 5, payloadMin: 1024, payloadMax: 1024}}
+proxy:
+  jvmOptions: ["-Xms256m", "-Xmx512m"]
+  base: |
+    server:
+      host: 127.0.0.1
+      port: ${PROXY_PORT}
+      maxConcurrentRequests: 20000
+    admin:
+      host: 127.0.0.1
+      port: ${ADMIN_PORT}
+    logging:
+      level: warn
+      accessLog: {enabled: false}
+    routes:
+      - id: api
+        match: {pathPrefix: /api}
+        policy: round-robin
+        upstreams:
+          - {id: a, url: "http://127.0.0.1:${UP_A}", maxConcurrent: 3000}
+          - {id: b, url: "http://127.0.0.1:${UP_B}", maxConcurrent: 3000}
+          - {id: c, url: "http://127.0.0.1:${UP_C}", maxConcurrent: 3000}
+  variants:
+    baseline: |
+      timeouts: {connect: 500ms, response: 300ms, request: 1s}
+    resilient: |
+      timeouts: {connect: 500ms, response: 300ms, request: 1s}
+      retry: {maxAttempts: 2, methods: [GET], backoff: {initial: 5ms, max: 50ms, jitter: full}, budget: {ratio: 0.2, minRetriesPerSecond: 20, window: 10s}}
+      circuitBreaker: {failureRateThreshold: 50, minimumRequests: 20, slidingWindow: {type: count, size: 50}, openDuration: 3s, halfOpenMaxProbes: 3, recoverySuccessThreshold: 3}
+      health: {passive: {consecutiveFailures: 5, ejectionTime: 3s}}
+load:
+  path: /api/x
+  rate: 500
+  warmup: 8s
+  duration: 40s
+  timeout: 4s
+  maxInFlight: 3000
+runs: 2
+timeline:
+  - {at: 8s, upstream: a, set: {delayMs: 505, jitterMs: 5}, label: "a +500 ms"}
+  - {at: 24s, upstream: a, set: {delayMs: 5, jitterMs: 5}, label: "a normal", recovery: true}

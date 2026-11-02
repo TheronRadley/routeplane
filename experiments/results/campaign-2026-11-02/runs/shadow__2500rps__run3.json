@@ -1,0 +1,264 @@
+{
+  "scenario": "shadow",
+  "variant": "default",
+  "description": "Basic proxy that mirrors 25% of requests to a shadow target: the cost of shadowing to the primary path.",
+  "kind": "steady",
+  "direct": false,
+  "tierRps": 2500,
+  "run": 3,
+  "startedAtMillis": 1793626255326,
+  "windowSeconds": 10.0,
+  "offeredRps": 2500.0,
+  "achievedRps": 1463.0,
+  "okRps": 1463.0,
+  "offered": 25000,
+  "completed": 14630,
+  "ok": 14630,
+  "droppedByGenerator": 10370,
+  "outcomes": {
+    "dropped_by_generator": 10370,
+    "ok": 14630
+  },
+  "successRatePct": 58.52,
+  "proxyGeneratedPct": 0.0,
+  "proxyUpstreamCausedPct": 0.0,
+  "proxyProtectivePct": 0.0,
+  "upstreamOriginatedPct": 0.0,
+  "transportPct": 0.0,
+  "latencyAll": {
+    "samples": 14630,
+    "p50ms": 1762.303,
+    "p90ms": 2451.455,
+    "p95ms": 2596.863,
+    "p99ms": 2756.607,
+    "p999ms": 2924.543,
+    "maxMs": 2951.167,
+    "meanMs": 1823.5321481886533
+  },
+  "latencyOk": {
+    "samples": 14630,
+    "p50ms": 1762.303,
+    "p90ms": 2451.455,
+    "p95ms": 2596.863,
+    "p99ms": 2756.607,
+    "p999ms": 2924.543,
+    "maxMs": 2951.167,
+    "meanMs": 1823.5321481886533
+  },
+  "generatorLagP99Ms": 59.903,
+  "generatorLagMaxMs": 112.127,
+  "generatorCpuPct": 22.749999999999996,
+  "flags": [
+    "SATURATED: achieved 1463 of 2500 rps offered, generator dropped 10370",
+    "GENERATOR-LAG: the load generator sent requests up to 60 ms (p99) after their intended time; latencies at this rate include that delay",
+    "MACHINE-CPU-SATURATED: all CPUs were 99% busy (generator, proxy and upstreams share them)"
+  ],
+  "proxyCpuSeconds": 9.54,
+  "proxyCpuPctOfMachine": 48.07060403284182,
+  "proxyRssMbMax": 547.625,
+  "proxyHeapUsedMbMax": 304.5,
+  "proxyGcCount": 23.0,
+  "proxyGcSeconds": 0.5199999999999999,
+  "proxyThreadsMax": 18.0,
+  "upstreamsCpuPctOfMachine": 10.48080255642673,
+  "systemCpuPct": 99.24242424242425,
+  "proxyCpuMsPerRequest": 0.6571511145979743,
+  "tcpDownstreamMax": 1730.0,
+  "tcpUpstreamMax": 3000.0,
+  "proxyDeltas": {
+    "routeplane_requests_total{route\u003d\"api\",status_class\u003d\"2xx\"}": 14212.0,
+    "routeplane_response_body_bytes_total{route\u003d\"api\"}": 1.4553088E7,
+    "routeplane_shadow_requests_total{route\u003d\"api\",target\u003d\"s1\"}": 3477.0,
+    "routeplane_shadow_sampled_total{route\u003d\"api\",target\u003d\"s1\"}": 3297.0,
+    "routeplane_upstream_requests_total{route\u003d\"api\",upstream\u003d\"a\",attempt\u003d\"first\"}": 13268.0,
+    "routeplane_upstream_responses_total{route\u003d\"api\",upstream\u003d\"a\",status_class\u003d\"2xx\"}": 14212.0
+  },
+  "retryAmplification": 0.933577258654658,
+  "shadowQueueDepthMax": 353.0,
+  "upstreamServed": {
+    "a": 14217,
+    "s": 3541
+  },
+  "series": [
+    {
+      "t": 0,
+      "offered": 2500,
+      "completed": 2017,
+      "ok": 2017,
+      "proxyErr": 0,
+      "upstreamErr": 0,
+      "transportErr": 0,
+      "dropped": 483,
+      "p50ms": 2129.919,
+      "p99ms": 2572.287,
+      "gauges": {
+        "routeplane_active_requests": 1216.0,
+        "routeplane_shadow_in_flight{route\u003d\"api\",target\u003d\"s1\"}": 32.0,
+        "routeplane_shadow_queue_depth{route\u003d\"api\",target\u003d\"s1\"}": 242.0,
+        "routeplane_upstream_healthy{route\u003d\"api\",upstream\u003d\"a\"}": 1.0,
+        "routeplane_upstream_in_flight{route\u003d\"api\",upstream\u003d\"a\"}": 1217.0
+      }
+    },
+    {
+      "t": 1,
+      "offered": 2500,
+      "completed": 1399,
+      "ok": 1399,
+      "proxyErr": 0,
+      "upstreamErr": 0,
+      "transportErr": 0,
+      "dropped": 1101,
+      "p50ms": 2441.215,
+      "p99ms": 2850.815,
+      "gauges": {
+        "routeplane_active_requests": 0.0,
+        "routeplane_shadow_in_flight{route\u003d\"api\",target\u003d\"s1\"}": 0.0,
+        "routeplane_shadow_queue_depth{route\u003d\"api\",target\u003d\"s1\"}": 0.0,
+        "routeplane_upstream_healthy{route\u003d\"api\",upstream\u003d\"a\"}": 1.0,
+        "routeplane_upstream_in_flight{route\u003d\"api\",upstream\u003d\"a\"}": 0.0
+      }
+    },
+    {
+      "t": 2,
+      "offered": 2500,
+      "completed": 1202,
+      "ok": 1202,
+      "proxyErr": 0,
+      "upstreamErr": 0,
+      "transportErr": 0,
+      "dropped": 1298,
+      "p50ms": 1695.743,
+      "p99ms": 2310.143,
+      "gauges": {
+        "routeplane_active_requests": 0.0,
+        "routeplane_shadow_in_flight{route\u003d\"api\",target\u003d\"s1\"}": 0.0,
+        "routeplane_shadow_queue_depth{route\u003d\"api\",target\u003d\"s1\"}": 0.0,
+        "routeplane_upstream_healthy{route\u003d\"api\",upstream\u003d\"a\"}": 1.0,
+        "routeplane_upstream_in_flight{route\u003d\"api\",upstream\u003d\"a\"}": 0.0
+      }
+    },
+    {
+      "t": 3,
+      "offered": 2500,
+      "completed": 1015,
+      "ok": 1015,
+      "proxyErr": 0,
+      "upstreamErr": 0,
+      "transportErr": 0,
+      "dropped": 1485,
+      "p50ms": 2211.839,
+      "p99ms": 2572.287,
+      "gauges": {
+        "routeplane_active_requests": 229.0,
+        "routeplane_shadow_in_flight{route\u003d\"api\",target\u003d\"s1\"}": 32.0,
+        "routeplane_shadow_queue_depth{route\u003d\"api\",target\u003d\"s1\"}": 58.0,
+        "routeplane_upstream_healthy{route\u003d\"api\",upstream\u003d\"a\"}": 1.0,
+        "routeplane_upstream_in_flight{route\u003d\"api\",upstream\u003d\"a\"}": 149.0
+      }
+    },
+    {
+      "t": 4,
+      "offered": 2500,
+      "completed": 1925,
+      "ok": 1925,
+      "proxyErr": 0,
+      "upstreamErr": 0,
+      "transportErr": 0,
+      "dropped": 575,
+      "p50ms": 1400.831,
+      "p99ms": 2605.055,
+      "gauges": {
+        "routeplane_active_requests": 1209.0,
+        "routeplane_shadow_in_flight{route\u003d\"api\",target\u003d\"s1\"}": 32.0,
+        "routeplane_shadow_queue_depth{route\u003d\"api\",target\u003d\"s1\"}": 296.0,
+        "routeplane_upstream_healthy{route\u003d\"api\",upstream\u003d\"a\"}": 1.0,
+        "routeplane_upstream_in_flight{route\u003d\"api\",upstream\u003d\"a\"}": 1308.0
+      }
+    },
+    {
+      "t": 5,
+      "offered": 2500,
+      "completed": 1908,
+      "ok": 1908,
+      "proxyErr": 0,
+      "upstreamErr": 0,
+      "transportErr": 0,
+      "dropped": 592,
+      "p50ms": 1875.967,
+      "p99ms": 2932.735,
+      "gauges": {
+        "routeplane_active_requests": 0.0,
+        "routeplane_shadow_in_flight{route\u003d\"api\",target\u003d\"s1\"}": 0.0,
+        "routeplane_shadow_queue_depth{route\u003d\"api\",target\u003d\"s1\"}": 0.0,
+        "routeplane_upstream_healthy{route\u003d\"api\",upstream\u003d\"a\"}": 1.0,
+        "routeplane_upstream_in_flight{route\u003d\"api\",upstream\u003d\"a\"}": 0.0
+      }
+    },
+    {
+      "t": 6,
+      "offered": 2500,
+      "completed": 619,
+      "ok": 619,
+      "proxyErr": 0,
+      "upstreamErr": 0,
+      "transportErr": 0,
+      "dropped": 1881,
+      "p50ms": 2146.303,
+      "p99ms": 2768.895,
+      "gauges": {
+        "routeplane_active_requests": 397.0,
+        "routeplane_shadow_in_flight{route\u003d\"api\",target\u003d\"s1\"}": 32.0,
+        "routeplane_shadow_queue_depth{route\u003d\"api\",target\u003d\"s1\"}": 68.0,
+        "routeplane_upstream_healthy{route\u003d\"api\",upstream\u003d\"a\"}": 1.0,
+        "routeplane_upstream_in_flight{route\u003d\"api\",upstream\u003d\"a\"}": 397.0
+      }
+    },
+    {
+      "t": 7,
+      "offered": 2500,
+      "completed": 2073,
+      "ok": 2073,
+      "proxyErr": 0,
+      "upstreamErr": 0,
+      "transportErr": 0,
+      "dropped": 427,
+      "p50ms": 1662.975,
+      "p99ms": 2408.447,
+      "gauges": {
+        "routeplane_active_requests": 1889.0,
+        "routeplane_shadow_in_flight{route\u003d\"api\",target\u003d\"s1\"}": 32.0,
+        "routeplane_shadow_queue_depth{route\u003d\"api\",target\u003d\"s1\"}": 353.0,
+        "routeplane_upstream_healthy{route\u003d\"api\",upstream\u003d\"a\"}": 1.0,
+        "routeplane_upstream_in_flight{route\u003d\"api\",upstream\u003d\"a\"}": 1756.0
+      }
+    },
+    {
+      "t": 8,
+      "offered": 2500,
+      "completed": 1279,
+      "ok": 1279,
+      "proxyErr": 0,
+      "upstreamErr": 0,
+      "transportErr": 0,
+      "dropped": 1221,
+      "p50ms": 1400.831,
+      "p99ms": 2129.919,
+      "gauges": {}
+    },
+    {
+      "t": 9,
+      "offered": 2500,
+      "completed": 1193,
+      "ok": 1193,
+      "proxyErr": 0,
+      "upstreamErr": 0,
+      "transportErr": 0,
+      "dropped": 1307,
+      "p50ms": 1449.983,
+      "p99ms": 1761.279,
+      "gauges": {}
+    }
+  ],
+  "events": [],
+  "breakerTransitions": []
+}

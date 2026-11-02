@@ -1,0 +1,20 @@
+# Administrative listener reachable from a management network: requires BOTH a bearer token and TLS
+# (binding to a non-loopback address without them is rejected when the configuration is validated).
+#   keytool -genkeypair -alias admin -keyalg RSA -keysize 2048 -validity 365 -dname CN=routeplane.internal \
+#           -keystore admin.p12 -storetype PKCS12
+#   export ADMIN_TOKEN="$(head -c 32 /dev/urandom | base64)"  KS_PASS=...  ADMIN_KEYSTORE=/etc/routeplane/admin.p12
+admin:
+  host: 10.1.2.3
+  port: 9443
+  auth:
+    bearerToken: "${ADMIN_TOKEN}"
+  tls:
+    keyStore: "${ADMIN_KEYSTORE:-/etc/routeplane/admin.p12}"
+    keyStorePassword: "${KS_PASS}"
+  allowedHosts: [routeplane.internal]
+
+routes:
+  - id: web
+    match: {pathPrefix: /}
+    upstreams:
+      - {id: app, url: "http://127.0.0.1:9001"}

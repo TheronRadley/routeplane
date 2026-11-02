@@ -1,0 +1,15 @@
+# Single source of truth for dependency versions. Exact versions only (no ranges, no "latest").
+# Dependency locking is enabled in the root build; see docs/development.md for generating lockfiles.
+[versions]
+snakeyaml = "2.7"
+gson = "2.13.2"
+hdrhistogram = "2.2.2"
+junit = "5.14.4"
+
+[libraries]
+snakeyaml = { module = "org.yaml:snakeyaml", version.ref = "snakeyaml" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+hdrhistogram = { module = "org.hdrhistogram:HdrHistogram", version.ref = "hdrhistogram" }
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
